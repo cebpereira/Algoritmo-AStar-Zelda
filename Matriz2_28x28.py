@@ -1,5 +1,7 @@
-parede = {"name": "parede", "value": 0}
-caminho = {"name": "caminho", "value": 10}
+terrenos = {
+    "parede": 0,
+    "caminho": 10
+}
 
 Matriz = [
 

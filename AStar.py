@@ -1,56 +1,80 @@
 import pygame
-import math
-from queue import PriorityQueue
+from mapa import mapa
+from dungeon1 import dungeon1
+from dungeon2 import dungeon2
+from dungeon3 import dungeon3
 
-#Configurações da janela
-WIDTH = 800
-WIN = pygame.display.set_mode((WIDTH, WIDTH))
-pygame.display.set_caption("Zelda com Algoritmo A*")
+# Definir as constantes
+LARGURA_TELA = 630
+ALTURA_TELA = 630
+TAMANHO_CELULA = 15
+CORES = {
+    #Cores do mapa
+    'Grama': (144,238,144), #Grama-> Verde Claro
+    'Areia': (245,222,179), #Areia -> Marron Claro
+    'Floresta': (34,139,34), #Floresta -> Verde Escuro
+    'Montanha': (139,69,19),  #Montanha -> Marrom escuro
+    'Agua': (0,0,255), #Água -> Azul
 
-#Cores dos Elementos do Mapa
-AguaCor = (0,0,255) #Água -> Azul
-GramaCor = (144,238,144) #Grama-> Verde Claro
-FlorestaCor = (34,139,34) #Floresta -> Verde Escuro
-AreiaCor = (245,222,179) #Areia -> Marron Claro
-MontanhaCor = (139,69,19) #Montanha -> Marrom Escuro
-EntradaMasmorraCor = (0,0,0) #Entrada da masmorra -> Preto
+    #Cores da dungeon
+    'Parede': (139,69,19),
+    'Caminho': (245,222,179)
+}
 
-#Cores relacionadas aos caminhos
-CaminhoCor = (128,0,128) #Cor do Caminho -> Roxo
+# Inicializar o Pygame
+pygame.init()
 
-#Status das masmorras, pingentes e da Espada
-Masmorra1 = False #[6,33]
-Masmorra2 = False #[40,18]
-Masmorra3 = False #[25,2]
-MasterSword = False #[3,2]
-PingenteD1 = False
-PingenteD2 = False
-PingenteD3 = False
+# Criar a tela
+tela = pygame.display.set_mode((LARGURA_TELA, ALTURA_TELA))
 
+matriz_atual = dungeon3
 
-class Spot:
-    def __init__(self, row, col, width, total_rows):
-        self.row = row
-        self.col = col
-        self.x = row * width
-        self.y = col * width
-        self.neighbors = []
-        self.width = width
-        self.total_rows = total_rows
+# Loop principal do jogo
+while True:
+    # Processar eventos
+    for evento in pygame.event.get():
+        if evento.type == pygame.QUIT:
+            pygame.quit()
+            exit()
 
+    # Desenhar a matriz na tela
+    if(matriz_atual == mapa):
+        for linha in range(len(matriz_atual)):
+            for coluna in range(len(matriz_atual[linha])):
+                valor = matriz_atual[linha][coluna]
+                if valor == 10:
+                    cor = CORES['Grama']
+                elif valor == 20:
+                    cor = CORES['Areia']
+                elif valor == 100:
+                    cor = CORES['Floresta']
+                elif valor == 150:
+                    cor = CORES['Montanha']
+                elif valor == 180:
+                    cor = CORES['Agua']
 
-    #Elementos
-    def is_water(self):
-        return self.color == AguaCor
-    
-    def is_grass(self):
-        return self.color == GramaCor
-    
-    def is_forest(self):
-        return self.color == FlorestaCor
-    
-    def is_sand(self):
-        return self.color == AreiaCor
-    
-    def is_mountain(self):
-        return self.color == MontanhaCor
+                pygame.draw.rect(tela, cor, (
+                    coluna * TAMANHO_CELULA,
+                    linha * TAMANHO_CELULA,
+                    TAMANHO_CELULA,
+                    TAMANHO_CELULA
+                ))
+
+    elif((matriz_atual == dungeon1) or (matriz_atual == dungeon2) or (matriz_atual == dungeon3)):
+        for linha in range(len(matriz_atual)):
+            for coluna in range(len(matriz_atual[linha])):
+                valor = matriz_atual[linha][coluna]
+                if valor == 0:
+                    cor = CORES["Parede"]
+                elif valor == 10:
+                    cor = CORES["Caminho"]
+
+                pygame.draw.rect(tela, cor, (
+                    coluna * TAMANHO_CELULA,
+                    linha * TAMANHO_CELULA,
+                    TAMANHO_CELULA,
+                    TAMANHO_CELULA
+                ))
+
+    # Atualizar a tela
+    pygame.display.update()

@@ -9,6 +9,7 @@ from dungeon3 import dungeon3
 
 #Cores do mapa
 CORES = {
+    #Terrenos
     'Grama': (144,238,144), #Grama-> Verde Claro
     'Areia': (245,222,179), #Areia -> Marron Claro
     'Floresta': (34,139,34), #Floresta -> Verde Escuro
@@ -24,13 +25,15 @@ CORES = {
     'PingenteD1': (0,0,255),
     'PingenteD2': (0,255,0),
     'PingenteD3': (255,0,0),
-    'Grade': (128, 128, 128)
+    'Grade': (128, 128, 128),
+    'PontoPartida': (47,79,79),
+    'PontoFinal': (192,192,192)
 }
 
 # Inicializar o Pygame
 pygame.init()
 
-matriz_atual = dungeon2
+matriz_atual = mapa
 
 #Gambiarra
 count = 1
@@ -76,9 +79,13 @@ while True:
                 elif valor == 180:
                     cor = CORES['Agua']
 
-                #Pintando entradas das dungeons
+                #Pintando pontos de interesse
                 if valor == 'PortaDungeon':
                     cor = CORES['PortaDungeon']
+                if valor == 'PontoPartida':
+                    cor = CORES['PontoPartida']
+                if valor == 'PontoFinal':
+                    cor = CORES['PontoFinal']
 
                 #Desenhando as células
                 pygame.draw.rect(tela, cor, (

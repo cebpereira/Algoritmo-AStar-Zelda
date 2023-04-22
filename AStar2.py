@@ -140,6 +140,80 @@ def Desenha_linha(linha, coluna, TAMANHO_CELULA):
     pygame.draw.line(tela, CORES['Grade'], (coluna * TAMANHO_CELULA, linha * TAMANHO_CELULA),
                              (coluna * TAMANHO_CELULA, (linha + 1) * TAMANHO_CELULA))
 
+
+def heuristica(ponto1, ponto2):
+	x1, y1 = ponto1
+	x2, y2 = ponto2
+	return ((x1 - x2) ** 2 + (y1 - y2) ** 2) ** 0.5
+
+
+#TODO: Construir função de desenhar caminho
+
+def algorithm(matriz_atual, ponto1, ponto2):
+    count = 0
+    open_set = PriorityQueue()
+    open_set.put((0, count, ponto1))
+    came_from = {}
+    g_score = {(x, y): float("inf") for x in range(len(matriz_atual)) for y in range(len(matriz_atual[0]))}
+    g_score[ponto1] = 0
+    f_score = {(x, y): float("inf") for x in range(len(matriz_atual)) for y in range(len(matriz_atual[0]))}
+    f_score[ponto1] = heuristica(ponto1, ponto2)
+
+    open_set_hash = {ponto1}
+
+    while not open_set.empty():
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+
+        atual = open_set.get()[2]
+        open_set_hash.remove(atual)
+
+        if atual == ponto2:
+            imprimir_caminho(came_from, ponto1, ponto2)
+            return True
+
+        for vizinho in get_vizinhos(matriz_atual, atual):
+            temp_g_score = g_score[atual] + 1
+
+            if temp_g_score < g_score[vizinho]:
+                came_from[vizinho] = atual
+                g_score[vizinho] = temp_g_score
+                f_score[vizinho] = temp_g_score + heuristica(vizinho, ponto2)
+                if vizinho not in open_set_hash:
+                    count += 1
+                    open_set.put((f_score[vizinho], count, vizinho))
+                    open_set_hash.add(vizinho)
+
+        if atual != ponto1:
+            matriz_atual[atual[0]][atual[1]] = 'x'
+
+    return False
+
+def get_vizinhos(matriz, pos):
+    vizinhos = []
+    x, y = pos
+    if x < len(matriz) - 1 and matriz[x+1][y] != 1:
+        vizinhos.append((x+1, y))
+    if x > 0 and matriz[x-1][y] != 1:
+        vizinhos.append((x-1, y))
+    if y < len(matriz[0]) - 1 and matriz[x][y+1] != 1:
+        vizinhos.append((x, y+1))
+    if y > 0 and matriz[x][y-1] != 1:
+        vizinhos.append((x, y-1))
+    return vizinhos
+
+def imprimir_caminho(came_from, ponto_inicial, ponto_final):
+    atual = ponto_final
+    caminho = [atual]
+
+    while atual != ponto_inicial:
+        atual = came_from[atual]
+        caminho.append(atual)
+
+    caminho.reverse()
+    print("Caminho encontrado:", caminho)
+
 while True:
     # Processar eventos
     for evento in pygame.event.get():
@@ -147,5 +221,10 @@ while True:
             pygame.quit()
             exit()
 
-    Desenha_mapa(mapa)
+    #Desenha_mapa(mapa)
     #Desenha_dungeon(dungeon1)
+    ponto1 = (25,28)
+    ponto2 = (6,33)
+
+    resultado = algorithm(mapa, ponto1, ponto2)
+    break

@@ -4,41 +4,39 @@ from mapa import mapa
 from dungeon1 import dungeon1
 from dungeon2 import dungeon2
 from dungeon3 import dungeon3
-
-# Definir as constantes
+from queue import PriorityQueue
 
 #Cores do mapa
 CORES = {
     #Terrenos
     'Grama': (144,238,144), #Grama-> Verde Claro
-    'Areia': (245,222,179), #Areia -> Marron Claro
+    'Areia': (245,222,179), #Areia -> Marrom Claro
     'Floresta': (34,139,34), #Floresta -> Verde Escuro
     'Montanha': (139,69,19),  #Montanha -> Marrom escuro
     'Agua': (0,0,139), #Água -> Azul Escuro
 
     #Cores das dungeons
-    'Parede': (139,69,19),
-    'Caminho': (245,222,179),
+    'Parede': (139,69,19), #Marrom escuro
+    'Caminho': (245,222,179), #Marrom Claro
 
     #Cores dos demais elementos
-    'PortaDungeon': (0,0,0),
-    'PingenteD1': (0,0,255),
-    'PingenteD2': (0,255,0),
-    'PingenteD3': (255,0,0),
-    'Grade': (128, 128, 128),
-    'PontoPartida': (47,79,79),
-    'PontoFinal': (192,192,192)
+    'PortaDungeon': (0,0,0), #Preto
+    'PingenteD1': (0,0,255), #Azul
+    'PingenteD2': (0,255,0), #Verde
+    'PingenteD3': (255,0,0), #Vermelho
+    'Grade': (128, 128, 128), #Cinza
+    'PontoPartida': (47,79,79), #Casa do Link -> Verde Acinzentado
+    'PontoFinal': (192,192,192), #Master Sword ->Prata
+    'CaminhoFinal': (255,165,0) #Laranja
 }
 
 # Inicializar o Pygame
 pygame.init()
 
-matriz_atual = mapa
+matriz_atual = dungeon1
 
 #Gambiarra
-count = 1
-
-#tela = pygame.display.set_mode((LARGURA_TELA, ALTURA_TELA))
+Tela_criada = False
 
 # Loop principal do jogo
 while True:
@@ -60,9 +58,9 @@ while True:
         ALTURA_TELA = linhas * TAMANHO_CELULA
 
         # Criar a tela
-        if(count == 1):
+        if(Tela_criada == False):
             tela = pygame.display.set_mode((LARGURA_TELA, ALTURA_TELA))
-            count = 2
+            Tela_criada = True
 
         for linha in range(len(matriz_atual)):
             for coluna in range(len(matriz_atual[linha])):
@@ -113,9 +111,9 @@ while True:
 
 
         # Criar a tela
-        if(count == 1):
+        if(Tela_criada == False):
             tela = pygame.display.set_mode((LARGURA_TELA, ALTURA_TELA))
-            count = 2
+            Tela_criada = True
 
         for linha in range(len(matriz_atual)):
             for coluna in range(len(matriz_atual[linha])):

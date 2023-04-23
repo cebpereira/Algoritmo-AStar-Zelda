@@ -57,7 +57,7 @@ def reconstruct_path(win, came_from, current, draw):
     return list_path
 
 # Algoritmo A*
-def A_star(win, draw, map_points, start_point, end_point, best_way=False):
+def algorithm(win, draw, map_points, start_point, end_point, best_way=False):
     came_from = {}
     count = 0
 

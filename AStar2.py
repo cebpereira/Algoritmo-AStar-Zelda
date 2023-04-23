@@ -149,7 +149,7 @@ def heuristica(ponto1, ponto2):
 
 #TODO: Construir função de desenhar caminho
 
-def algorithm(matriz_atual, ponto1, ponto2):
+def algoritmo(matriz_atual, ponto1, ponto2):
     count = 0
     open_set = PriorityQueue()
     open_set.put((0, count, ponto1))
@@ -214,17 +214,72 @@ def imprimir_caminho(came_from, ponto_inicial, ponto_final):
     caminho.reverse()
     print("Caminho encontrado:", caminho)
 
+
+pingenteD1Bool = False
+pingenteD2Bool = False
+pingenteD3Bool = False
+masterSwordBool = False
+
 while True:
+    #Localização dos pontos de interesse
+    ponto_origem = (25,28)
+    portaD1 = (6,33)
+    portaD2 = (40, 18)
+    portaD3 = (25,2)
+    ponto_destino = (7, 6)
+
+    entradaD1 = (26, 14)
+    pingente1 = (3, 13)
+
+    entradaD2 = (25, 13)
+    pingente2 = (2, 13)
+
+    entradaD3 = (25, 14)
+    pingente3 = (19, 15)
+
     # Processar eventos
     for evento in pygame.event.get():
         if evento.type == pygame.QUIT:
             pygame.quit()
             exit()
 
+    if pingenteD1Bool == False:
+        #Ponto de origem -> Porta Dungeon1
+        algoritmo(mapa, ponto_origem, portaD1)
+        #Entrada da Dungeon1 -> Pingente 1
+        algoritmo(dungeon1, entradaD1, pingente1)
+        #Caminho inverso
+        algoritmo(dungeon1, pingente1, entradaD1)
+        pingenteD1Bool = True
+
+    if pingenteD2Bool == False:
+        #Entrada Dungeon1 -> Entrdada Dungeon2
+        algoritmo(mapa, portaD1, portaD2)
+        #Entrada da Dungeon2 -> Pingente 2
+        algoritmo(dungeon2, entradaD2, pingente2)
+        #Caminho inverso
+        algoritmo(dungeon2, pingente2, entradaD2)
+        pingenteD2Bool = True
+
+    if pingenteD3Bool == False:
+        #Entrada Dungeon2 -> Entrdada Dungeon3
+        algoritmo(mapa, portaD2, portaD3)
+        #Entrada da Dungeon3 -> Pingente 3
+        algoritmo(dungeon3, entradaD3, pingente3)
+        #Caminho inverso
+        algoritmo(dungeon3, pingente3, entradaD3)
+        pingenteD3Bool == True
+
+    if masterSwordBool == False:
+        #Entrada Dungeon3 -> Ponto de destino
+        algoritmo(mapa, portaD3, ponto_destino)
+        masterSwordBool = True
+        break
+
     #Desenha_mapa(mapa)
     #Desenha_dungeon(dungeon1)
-    ponto1 = (25,28)
-    ponto2 = (6,33)
+    #ponto1 = (25,28)
+    #ponto2 = (6,33)
 
-    resultado = algorithm(mapa, ponto1, ponto2)
-    break
+    #resultado = algoritmo(mapa, ponto1, ponto2)
+    #break

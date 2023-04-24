@@ -30,7 +30,8 @@ CORES = {
     'Grade': (128, 128, 128), #Cinza
     'PontoPartida': (47,79,79), #Casa do Link -> Verde Acinzentado
     'PontoFinal': (192,192,192), #Master Sword ->Prata
-    'CaminhoPercorrido': (255,105,180) #Hotpink
+    'CaminhoPercorrido': (255,105,180), #Hotpink
+    'CaminhoDescoberto': (155,155,155)
 }
 
 #Globais
@@ -203,6 +204,8 @@ def algoritmo(matriz_atual, ponto1, ponto2):
                     lista_aberta.put((f_score[vizinho], count, vizinho))
                     open_set_hash.add(vizinho)
 
+        Desenha_mapa(matriz_atual)
+        Desenha_caminho(matriz_atual, caminho_percorrido)
 
     Desenha_mapa(matriz_atual)
     caminho_final = Imprime_caminho(caminho_percorrido, ponto1, ponto2)
@@ -225,7 +228,7 @@ def Imprime_caminho(caminho_percorrido, ponto1, ponto2):
     #print("Caminho encontrado:", caminho)
     return caminho
 
-def Desenha_caminho(matriz_atual,  caminho_final):
+def Desenha_caminho(matriz_atual, caminho_final):
 
     for linha in range(len(matriz_atual)):
         for coluna in range(len(matriz_atual[linha])):
@@ -259,11 +262,11 @@ while True:
     # entradaD3 = (13, 24)
     # pingente3 = (14, 18)
 
-    # # Processar eventos
-    # for evento in pygame.event.get():
-    #     if evento.type == pygame.QUIT:
-    #         pygame.quit()
-    #         exit()
+    # Processar eventos
+    for evento in pygame.event.get():
+        if evento.type == pygame.QUIT:
+            pygame.quit()
+            exit()
 
     # if pingenteD1Bool == False:
     #     #Ponto de origem -> Porta Dungeon1
@@ -301,7 +304,7 @@ while True:
     #Desenha_mapa(mapa)
     #Desenha_dungeon(dungeon1)
     ponto1 = (27,24)
-    ponto2 = (32,5)
+    ponto2 = (17,39)
 
     algoritmo(mapa, ponto1, ponto2)
     #break

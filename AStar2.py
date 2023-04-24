@@ -1,10 +1,13 @@
 #Imports dos mapas e das bibliotecas necessárias
 import pygame
+import time
 from mapa import mapa
 from dungeon1 import dungeon1
 from dungeon2 import dungeon2
 from dungeon3 import dungeon3
 from queue import PriorityQueue
+
+#TODO: Construir função de desenhar caminho
 
 #Cores do mapa
 CORES = {
@@ -27,7 +30,7 @@ CORES = {
     'Grade': (128, 128, 128), #Cinza
     'PontoPartida': (47,79,79), #Casa do Link -> Verde Acinzentado
     'PontoFinal': (192,192,192), #Master Sword ->Prata
-    'CaminhoFinal': (255,165,0) #Laranja
+    'CaminhoPercorrido': (255,105,180) #Hotpink
 }
 
 #Globais
@@ -41,6 +44,7 @@ pygame.init()
 def Desenha_mapa(matriz_atual):
     global tela_criada
     global tela
+
     #Definição de valores do mapa principal
     linhas = 42
     colunas = 42
@@ -82,6 +86,7 @@ def Desenha_mapa(matriz_atual):
             Desenha_linha(linha, coluna, TAMANHO_CELULA)
 
     pygame.display.update()
+
 
 def Desenha_dungeon(matriz_atual):
     global tela_criada
@@ -126,6 +131,7 @@ def Desenha_dungeon(matriz_atual):
 
     pygame.display.update()
 
+
 def Desenha_celula(cor, linha, coluna, TAMANHO_CELULA):
     pygame.draw.rect(tela, cor, (
                     coluna * TAMANHO_CELULA,
@@ -133,6 +139,7 @@ def Desenha_celula(cor, linha, coluna, TAMANHO_CELULA):
                     TAMANHO_CELULA,
                     TAMANHO_CELULA
                 ))
+
 
 def Desenha_linha(linha, coluna, TAMANHO_CELULA):
     pygame.draw.line(tela, CORES['Grade'], (coluna * TAMANHO_CELULA, linha * TAMANHO_CELULA),
@@ -147,50 +154,7 @@ def heuristica(ponto1, ponto2):
 	return ((x1 - x2) ** 2 + (y1 - y2) ** 2) ** 0.5
 
 
-#TODO: Construir função de desenhar caminho
-
-def algoritmo(matriz_atual, ponto1, ponto2):
-    count = 0
-    open_set = PriorityQueue()
-    open_set.put((0, count, ponto1))
-    came_from = {}
-    g_score = {(x, y): float("inf") for x in range(len(matriz_atual)) for y in range(len(matriz_atual[0]))}
-    g_score[ponto1] = 0
-    f_score = {(x, y): float("inf") for x in range(len(matriz_atual)) for y in range(len(matriz_atual[0]))}
-    f_score[ponto1] = heuristica(ponto1, ponto2)
-
-    open_set_hash = {ponto1}
-
-    while not open_set.empty():
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-
-        atual = open_set.get()[2]
-        open_set_hash.remove(atual)
-
-        if atual == ponto2:
-            imprimir_caminho(came_from, ponto1, ponto2)
-            return True
-
-        for vizinho in get_vizinhos(matriz_atual, atual):
-            temp_g_score = g_score[atual] + 1
-
-            if temp_g_score < g_score[vizinho]:
-                came_from[vizinho] = atual
-                g_score[vizinho] = temp_g_score
-                f_score[vizinho] = temp_g_score + heuristica(vizinho, ponto2)
-                if vizinho not in open_set_hash:
-                    count += 1
-                    open_set.put((f_score[vizinho], count, vizinho))
-                    open_set_hash.add(vizinho)
-
-        if atual != ponto1:
-            matriz_atual[atual[0]][atual[1]] = 'x'
-
-    return False
-
-def get_vizinhos(matriz, pos):
+def adiciona_vizinhos(matriz, pos):
     vizinhos = []
     x, y = pos
     if x < len(matriz) - 1 and matriz[x+1][y] != 1:
@@ -203,83 +167,141 @@ def get_vizinhos(matriz, pos):
         vizinhos.append((x, y-1))
     return vizinhos
 
-def imprimir_caminho(came_from, ponto_inicial, ponto_final):
-    atual = ponto_final
+
+def algoritmo(matriz_atual, ponto1, ponto2):
+    count = 0
+    lista_aberta = PriorityQueue()
+    lista_aberta.put((0, count, ponto1))
+    caminho_percorrido = {}
+    g_score = {(x, y): float("inf") for x in range(len(matriz_atual)) for y in range(len(matriz_atual[0]))}
+    g_score[ponto1] = 0
+    f_score = {(x, y): float("inf") for x in range(len(matriz_atual)) for y in range(len(matriz_atual[0]))}
+    f_score[ponto1] = heuristica(ponto1, ponto2)
+
+    open_set_hash = {ponto1}
+
+    while not lista_aberta.empty():
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+
+        atual = lista_aberta.get()[2]
+        open_set_hash.remove(atual)
+
+        if atual == ponto2:
+            break
+
+        for vizinho in adiciona_vizinhos(matriz_atual, atual):
+            temp_g_score = g_score[atual] + 1
+
+            if temp_g_score < g_score[vizinho]:
+                caminho_percorrido[vizinho] = atual
+                g_score[vizinho] = temp_g_score
+                f_score[vizinho] = temp_g_score + heuristica(vizinho, ponto2)
+                if vizinho not in open_set_hash:
+                    count += 1
+                    lista_aberta.put((f_score[vizinho], count, vizinho))
+                    open_set_hash.add(vizinho)
+
+
+    Desenha_mapa(matriz_atual)
+    caminho_final = Imprime_caminho(caminho_percorrido, ponto1, ponto2)
+    Desenha_caminho(matriz_atual, caminho_final)
+
+    time.sleep(20)
+    return False
+
+
+def Imprime_caminho(caminho_percorrido, ponto1, ponto2):
+    atual = ponto2
     caminho = [atual]
 
-    while atual != ponto_inicial:
-        atual = came_from[atual]
+    while atual != ponto1:
+        atual = caminho_percorrido[atual]
         caminho.append(atual)
 
     caminho.reverse()
-    print("Caminho encontrado:", caminho)
+
+    #print("Caminho encontrado:", caminho)
+    return caminho
+
+def Desenha_caminho(matriz_atual,  caminho_final):
+
+    for linha in range(len(matriz_atual)):
+        for coluna in range(len(matriz_atual[linha])):
+            posicao = (linha, coluna)
+            if posicao in caminho_final:
+                cor = CORES['CaminhoPercorrido']
+                Desenha_celula(cor, linha, coluna, TAMANHO_CELULA)
+
+    pygame.display.update()
 
 
-pingenteD1Bool = False
-pingenteD2Bool = False
-pingenteD3Bool = False
-masterSwordBool = False
+# pingenteD1Bool = False
+# pingenteD2Bool = False
+# pingenteD3Bool = False
+# masterSwordBool = False
 
 while True:
     #Localização dos pontos de interesse
-    ponto_origem = (25,28)
-    portaD1 = (6,33)
-    portaD2 = (40, 18)
-    portaD3 = (25,2)
-    ponto_destino = (7, 6)
+    # ponto_origem = (27,24)
+    # portaD1 = (32,5)
+    # portaD2 = (17, 39)
+    # portaD3 = (1,24)
+    # ponto_destino = (5, 6)
 
-    entradaD1 = (26, 14)
-    pingente1 = (3, 13)
+    # entradaD1 = (13, 25)
+    # pingente1 = (12, 2)
 
-    entradaD2 = (25, 13)
-    pingente2 = (2, 13)
+    # entradaD2 = (12, 24)
+    # pingente2 = (12, 1)
 
-    entradaD3 = (25, 14)
-    pingente3 = (19, 15)
+    # entradaD3 = (13, 24)
+    # pingente3 = (14, 18)
 
-    # Processar eventos
-    for evento in pygame.event.get():
-        if evento.type == pygame.QUIT:
-            pygame.quit()
-            exit()
+    # # Processar eventos
+    # for evento in pygame.event.get():
+    #     if evento.type == pygame.QUIT:
+    #         pygame.quit()
+    #         exit()
 
-    if pingenteD1Bool == False:
-        #Ponto de origem -> Porta Dungeon1
-        algoritmo(mapa, ponto_origem, portaD1)
-        #Entrada da Dungeon1 -> Pingente 1
-        algoritmo(dungeon1, entradaD1, pingente1)
-        #Caminho inverso
-        algoritmo(dungeon1, pingente1, entradaD1)
-        pingenteD1Bool = True
+    # if pingenteD1Bool == False:
+    #     #Ponto de origem -> Porta Dungeon1
+    #     algoritmo(mapa, ponto_origem, portaD1)
+    #     #Entrada da Dungeon1 -> Pingente 1
+    #     algoritmo(dungeon1, entradaD1, pingente1)
+    #     #Caminho inverso
+    #     algoritmo(dungeon1, pingente1, entradaD1)
+    #     pingenteD1Bool = True
 
-    if pingenteD2Bool == False:
-        #Entrada Dungeon1 -> Entrdada Dungeon2
-        algoritmo(mapa, portaD1, portaD2)
-        #Entrada da Dungeon2 -> Pingente 2
-        algoritmo(dungeon2, entradaD2, pingente2)
-        #Caminho inverso
-        algoritmo(dungeon2, pingente2, entradaD2)
-        pingenteD2Bool = True
+    # if pingenteD2Bool == False:
+    #     #Entrada Dungeon1 -> Entrdada Dungeon2
+    #     algoritmo(mapa, portaD1, portaD2)
+    #     #Entrada da Dungeon2 -> Pingente 2
+    #     algoritmo(dungeon2, entradaD2, pingente2)
+    #     #Caminho inverso
+    #     algoritmo(dungeon2, pingente2, entradaD2)
+    #     pingenteD2Bool = True
 
-    if pingenteD3Bool == False:
-        #Entrada Dungeon2 -> Entrdada Dungeon3
-        algoritmo(mapa, portaD2, portaD3)
-        #Entrada da Dungeon3 -> Pingente 3
-        algoritmo(dungeon3, entradaD3, pingente3)
-        #Caminho inverso
-        algoritmo(dungeon3, pingente3, entradaD3)
-        pingenteD3Bool == True
+    # if pingenteD3Bool == False:
+    #     #Entrada Dungeon2 -> Entrdada Dungeon3
+    #     algoritmo(mapa, portaD2, portaD3)
+    #     #Entrada da Dungeon3 -> Pingente 3
+    #     algoritmo(dungeon3, entradaD3, pingente3)
+    #     #Caminho inverso
+    #     algoritmo(dungeon3, pingente3, entradaD3)
+    #     pingenteD3Bool == True
 
-    if masterSwordBool == False:
-        #Entrada Dungeon3 -> Ponto de destino
-        algoritmo(mapa, portaD3, ponto_destino)
-        masterSwordBool = True
-        break
+    # if masterSwordBool == False:
+    #     #Entrada Dungeon3 -> Ponto de destino
+    #     algoritmo(mapa, portaD3, ponto_destino)
+    #     masterSwordBool = True
+    #     break
 
     #Desenha_mapa(mapa)
     #Desenha_dungeon(dungeon1)
-    #ponto1 = (25,28)
-    #ponto2 = (6,33)
+    ponto1 = (27,24)
+    ponto2 = (32,5)
 
-    #resultado = algoritmo(mapa, ponto1, ponto2)
+    algoritmo(mapa, ponto1, ponto2)
     #break

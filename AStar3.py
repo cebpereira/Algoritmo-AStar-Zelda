@@ -58,15 +58,6 @@ def Desenha_mapa(matriz_atual):
         tela = pygame.display.set_mode((LARGURA_TELA, ALTURA_TELA))
         tela_criada = True
 
-    dungeon_gate = pygame.image.load("img/dungeonGate.png").convert_alpha()
-    dungeon_gate = pygame.transform.scale(dungeon_gate, (TAMANHO_CELULA, TAMANHO_CELULA))
-
-    linkChar = pygame.image.load("img/linkChar.png").convert_alpha()
-    linkChar = pygame.transform.scale(linkChar, (15, 15))
-
-    masterSword = pygame.image.load("img/masterSword.png").convert_alpha()
-    masterSword = pygame.transform.scale(masterSword, (15, 15))
-
     for linha in range(len(matriz_atual)):
         for coluna in range(len(matriz_atual[linha])):
             valor = matriz_atual[linha][coluna]
@@ -82,24 +73,15 @@ def Desenha_mapa(matriz_atual):
             elif valor == 180:
                 cor = CORES['Agua']
 
-            #Adiciona as sprites dos pontos de interesse
-            if valor == 0: # Sprite Link
-                posicao_x = linha * TAMANHO_CELULA
-                posicao_y = coluna * TAMANHO_CELULA
-                tela.blit(linkChar, (posicao_y, posicao_x))
-                pygame.display.update()
+            #Adiciona pontos de interesse
+            if valor == 99:
+                cor = CORES["PontoPartida"]
 
-            elif((valor == 1) or (valor == 2) or (valor == 3) or (valor == 4)): # Sprite Portas das Dungeons
-                posicao_x = linha * TAMANHO_CELULA
-                posicao_y = coluna * TAMANHO_CELULA
-                tela.blit(dungeon_gate, (posicao_y, posicao_x))
-                pygame.display.update()
+            elif((valor == 98) or (valor == 97) or (valor == 96) or (valor == 95)):
+                cor = CORES["PortaDungeon"]
 
-            elif valor == 5: # Sprite Master Sword
-                posicao_x = linha * TAMANHO_CELULA
-                posicao_y = coluna * TAMANHO_CELULA
-                tela.blit(masterSword, (posicao_y, posicao_x))
-                pygame.display.update()
+            elif valor == 94:
+                cor = CORES["PontoFinal"]
 
             #Chamadas das funções de desenho
             Desenha_celula(cor, linha, coluna, TAMANHO_CELULA)
@@ -279,11 +261,11 @@ run = True
 
 while run:
     #Localização dos pontos de interesse
-    ponto_origem = (27, 24) # Ponto 0
-    portaD1 = (32, 5) # Ponto 1
-    portaD2 = (17, 39) # Ponto 2
-    portaD3 = (1,24) # Ponto 3
-    ponto_destino = (5, 6) # Ponto 4
+    ponto_origem = (27, 24) # Ponto 99
+    portaD1 = (32, 5) # Ponto 98
+    portaD2 = (17, 39) # Ponto 97
+    portaD3 = (1,24) # Ponto 96
+    ponto_destino = (5, 6) # Ponto 95
 
     entradaD1 = (26, 14)
     pingente1 = (3, 13)
@@ -337,5 +319,5 @@ while run:
     # ponto1 = (27,24)
     # ponto2 = (17,39)
 
-    algoritmo(mapa, ponto_origem, portaD2)
+    algoritmo(mapa, ponto_origem, portaD1)
     #break

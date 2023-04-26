@@ -38,6 +38,18 @@ def Desenha_mapa(matriz_atual):
         tela = pygame.display.set_mode((LARGURA_TELA, ALTURA_TELA))
         tela_criada = True
 
+    IMAGENS = {
+        'Grama': pygame.image.load("img/grama_sprite.png").convert_alpha(),
+        'Areia': pygame.image.load("img/areia_sprite.png").convert_alpha(),
+        'Floresta': pygame.image.load("img/floresta_sprite.png").convert_alpha(),
+        'Montanha': pygame.image.load("img/montanha_sprite.png").convert_alpha(),
+        'Agua': pygame.image.load("img/agua_sprite.png").convert_alpha(),
+
+        'Casa': pygame.image.load("img/casa_sprite.png").convert_alpha(),
+        'DungeonGate': pygame.image.load("img/dungeon_gate.png").convert_alpha(),
+        'MasterSword': pygame.image.load("img/master_sword.png").convert_alpha()
+    }
+
 
     # Percorre a matriz atribuindo cor e pintando os elementos do mapa
     for linha in range(len(matriz_atual)):
@@ -45,39 +57,39 @@ def Desenha_mapa(matriz_atual):
             valor = matriz_atual[linha][coluna]
             # Pintando terrenos do mapa
             if valor == 10:
-                sprite = pygame.image.load("img/grama_sprite.png").convert_alpha()
+                sprite = IMAGENS["Grama"]
                 sprite = pygame.transform.scale(sprite, (TAMANHO_CELULA, TAMANHO_CELULA))
                 pygame.display.update()
             elif valor == 20:
-                sprite = pygame.image.load("img/areia_sprite.png").convert_alpha()
+                sprite = IMAGENS["Areia"]
                 sprite = pygame.transform.scale(sprite, (TAMANHO_CELULA, TAMANHO_CELULA))
                 pygame.display.update()
             elif valor == 100:
-                sprite = pygame.image.load("img/floresta_sprite.png").convert_alpha()
+                sprite = IMAGENS["Floresta"]
                 sprite = pygame.transform.scale(sprite, (TAMANHO_CELULA, TAMANHO_CELULA))
                 pygame.display.update()
             elif valor == 150:
-                sprite = pygame.image.load("img/montanha_sprite.png").convert_alpha()
+                sprite = IMAGENS["Montanha"]
                 sprite = pygame.transform.scale(sprite, (TAMANHO_CELULA, TAMANHO_CELULA))
                 pygame.display.update()
             elif valor == 180:
-                sprite = pygame.image.load("img/agua_sprite.png").convert_alpha()
+                sprite = IMAGENS["Agua"]
                 sprite = pygame.transform.scale(sprite, (TAMANHO_CELULA, TAMANHO_CELULA))
                 pygame.display.update()
 
             # Adiciona pontos de interesse
             elif valor == 99:
-                sprite = pygame.image.load("img/casa_sprite.png").convert_alpha()
+                sprite = IMAGENS["Casa"]
                 sprite = pygame.transform.scale(sprite, (TAMANHO_CELULA, TAMANHO_CELULA))
                 pygame.display.update()
 
             elif((valor == 98) or (valor == 97) or (valor == 96) or (valor == 95)):
-                sprite = pygame.image.load("img/dungeon_gate.png").convert_alpha()
+                sprite = IMAGENS["DungeonGate"]
                 sprite = pygame.transform.scale(sprite, (TAMANHO_CELULA, TAMANHO_CELULA))
                 pygame.display.update()
 
             elif valor == 94:
-                sprite = pygame.image.load("img/master_sword.png").convert_alpha()
+                sprite = IMAGENS["MasterSword"]
                 sprite = pygame.transform.scale(sprite, (TAMANHO_CELULA, TAMANHO_CELULA))
                 pygame.display.update()
 
@@ -107,37 +119,48 @@ def Desenha_dungeon(matriz_atual):
         tela_criada = True
 
 
-    # Percorre a matriz atribuindo cor e pintando os elementos do mapa
+    IMAGENS = {
+        'Areia': pygame.image.load("img/areia_sprite.png").convert_alpha(),
+        'Montanha': pygame.image.load("img/montanha_sprite.png").convert_alpha(),
+
+        'DungeonGate': pygame.image.load("img/dungeon_gate.png").convert_alpha(),
+
+        'Pingente1': pygame.image.load("img/pingente1.png").convert_alpha(),
+        'Pingente2': pygame.image.load("img/pingente2.png").convert_alpha(),
+        'Pingente3': pygame.image.load("img/pingente3.png").convert_alpha(),
+    }
+
+    # Percorre a matriz atribuindo imagens aos elementos do mapa
     for linha in range(len(matriz_atual)):
         for coluna in range(len(matriz_atual[linha])):
             valor = matriz_atual[linha][coluna]
             if valor == 0:
-                sprite = pygame.image.load("img/montanha_sprite.png").convert_alpha()
+                sprite = IMAGENS["Montanha"]
                 sprite = pygame.transform.scale(sprite, (TAMANHO_CELULA, TAMANHO_CELULA))
                 pygame.display.update()
             elif valor == 10:
-                sprite = pygame.image.load("img/areia_sprite.png").convert_alpha()
+                sprite = IMAGENS["Areia"]
                 sprite = pygame.transform.scale(sprite, (TAMANHO_CELULA, TAMANHO_CELULA))
                 pygame.display.update()
 
-            # Pintando a posição da porta e do pingente
+            # Pintando a posição da porta e dos pingentes
             if(valor == 1):
-                sprite = pygame.image.load("img/dungeon_gate.png").convert_alpha()
+                sprite = IMAGENS["DungeonGate"]
                 sprite = pygame.transform.scale(sprite, (TAMANHO_CELULA, TAMANHO_CELULA))
                 pygame.display.update()
 
             elif((matriz_atual == dungeon1) and (valor == 2)) :
-                sprite = pygame.image.load("img/pingente1.png").convert_alpha()
+                sprite = IMAGENS["Pingente1"]
                 sprite = pygame.transform.scale(sprite, (TAMANHO_CELULA, TAMANHO_CELULA))
                 pygame.display.update()
 
             elif((matriz_atual == dungeon2) and (valor == 2)) :
-                sprite = pygame.image.load("img/pingente2.png").convert_alpha()
+                sprite = IMAGENS["Pingente2"]
                 sprite = pygame.transform.scale(sprite, (TAMANHO_CELULA, TAMANHO_CELULA))
                 pygame.display.update()
 
             elif((matriz_atual == dungeon3) and (valor == 2)) :
-                sprite = pygame.image.load("img/pingente3.png").convert_alpha()
+                sprite = IMAGENS["Pingente3"]
                 sprite = pygame.transform.scale(sprite, (TAMANHO_CELULA, TAMANHO_CELULA))
                 pygame.display.update()
 
@@ -188,7 +211,7 @@ def algoritmo(matriz_atual, ponto1, ponto2):
     lista_fechada.put((0, count, ponto1))
     caminho_percorrido = {}
     g = {(x, y): float("inf") for x in range(len(matriz_atual)) for y in range(len(matriz_atual[0]))} # Custo percorrido até o momento
-    g[ponto1] = 0
+    g[ponto1] = 0 # Custo ponto inicial
     f = {(x, y): float("inf") for x in range(len(matriz_atual)) for y in range(len(matriz_atual[0]))} # Custo total -> F(n) = G(n) + H(n)
     f[ponto1] = heuristica(ponto1, ponto2, matriz_atual)
 
@@ -253,7 +276,6 @@ def Desenha_caminho(caminho_final):
 
     for i, (linha, coluna) in enumerate(caminho_final):
         Desenha_sprite(sprite, linha, coluna)
-        Desenha_linha(linha, coluna, TAMANHO_CELULA)
         pygame.display.update()
         pygame.time.delay(50)
 
